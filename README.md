@@ -1,0 +1,2 @@
+# bot
+Velcro Discord Bot
