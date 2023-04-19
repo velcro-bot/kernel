@@ -1,40 +1,22 @@
 import { URL } from "node:url";
+import { Collection } from "discord.js";
 import { s } from "@sapphire/shapeshift";
-import graceful from "graceful-fs";
+import glob from "fast-glob";
 
-const PATH = (new URL(process.cwd(), import.meta.url).pathname).concat("/");
+const PATH = (new URL(process.cwd(), import.meta.url).pathname);
 
 /**
  * @param {string} path 
- * @param {{ handler: (file: string, index: number) => void, filter: (file: string, index: number, array: string[]) => boolean }} options
+ * @param {(file: string, index: number, array: string[]) => boolean} filter
  */
-export function read(path, options = { handler: () => { }, filter: () => { } }) {
-  let { handler, filter } = options;
+export function read(path, filter = null) {
   s.string.parse(path);
 
-  let results = graceful.readdirSync(PATH.concat(path), { encoding: "utf8" });
+  let results = glob.sync(`./${path}`, { dot: true, absolute: true });
 
   if (typeof filter === "function") results = results.filter(filter);
-  if (typeof handler === "function") for (let index = 0; index < results.length; index++) {
-    const result = results[index];
-
-    let syncResult = stat(PATH.concat(`${path}/${result}`));
-
-    if (syncResult.isDirectory()) for (let i = 0; i < result.length; i++) handler(PATH.concat(`${result.concat(`/${result[index]}`)}`), i);
-    if (syncResult.isFile()) handler(PATH.concat(`${path}/${result}`), index);
-  };
 
   return results;
-};
-
-/**
- * @param {string} path 
- * @returns {graceful.Stats}
- */
-export function stat(path) {
-  s.string.parse(path);
-
-  return graceful.statSync(PATH.concat(path));
 };
 
 /**
@@ -65,5 +47,33 @@ export async function delay(seconds = 1) {
 
   return promise;
 };
+
+const storage = {};
+
+/**
+ * Creates new Storage.
+ * @param {string} name 
+ * @returns {Collection<string, any>}
+ */
+export function Storage(name, overWrite = false) {
+  s.string.parse(name);
+  s.boolean.parse(overWrite);
+
+  let data = storage[name];
+
+  if (data && !overWrite) return data;
+  else if (overWrite && data) storage[name] = new Collection();
+  else storage[name] = new Collection();
+
+  data = storage[name];
+
+  return data;
+};
+
+export const commands = Storage("commands");
+export const cooldowns = Storage("cooldowns");
+export const events = Storage("events");
+export const handlers = Storage("handlers");
+export const languages = Storage("languages");
 
 export default PATH;

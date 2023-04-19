@@ -3,7 +3,7 @@ import logs from "discord-logs";
 
 import { s } from "@sapphire/shapeshift";
 
-import Loader from "../functions/Loader/Loader.js";
+import Loader from "./Loader.js";
 
 import ora from "ora";
 
@@ -33,26 +33,32 @@ export class Client extends Base {
     this.token = token;
 
     /**
+     * @type {Loader}
      * @private
      */
-    this.loader = Loader(this);
+    this.loader = new Loader(this);
   };
 
   /**
    * @returns {Promise<void>}
    */
   async login() {
-    await this.loader.All(async ({ commands }) => {
-      const spinner = ora("Connecting to Gateway").start();
+    let spinner = ora("Connecting to Gateway");
 
-      await super.login(this.token).then(() => {
-        this.application.commands.set(commands);
-
+    this.loader.once("ready", async () => {
+      spinner.start();
+      
+      super.login(this.token).then(async () => {
         spinner.succeed("Connected to Gateway.");
+
+        await this.application.commands.set([]);
+        await this.application.commands.set(this.loader.commands);
       });
 
       return void 0;
     });
+
+    await this.loader.All();
 
     return void 0;
   };

@@ -18,11 +18,7 @@ function spawn() {
   const _process = fork(main);
 
   _process.on("error", (error) => webhook.send({ content: String(error) }));
-  _process.on("exit", (code, signal) => {
-    webhook.send(`Error[${code ?? 1}]: ${signal ?? "None"}`);
-
-    spawn();
-  });
+  _process.on("exit", spawn);
 
   return void 0;
 };

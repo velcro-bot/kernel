@@ -12,8 +12,6 @@ import {
 
 import { s } from "@sapphire/shapeshift";
 
-import { commands, events, handlers, cooldowns, languages } from "../../functions/Loader/Storage.js";
-
 import config from "../../../config/config.js";
 
 import API, {
@@ -24,7 +22,7 @@ import API, {
 } from "../../../api/export.js";
 
 import Checker, { isOwner } from "../../functions/Checker.js";
-import { error } from "../../Utils.js";
+import { error, commands, events, handlers, cooldowns, languages } from "../../Utils.js";
 
 export class Base {
   constructor(client) {
@@ -35,81 +33,95 @@ export class Base {
 
     /**
      * @type {typeof SlashCommandBuilder}
+     * @protected
      */
     this.SlashCommand = SlashCommandBuilder;
 
     /**
      * @type {typeof ContextMenuCommandBuilder}
+     * @protected
      */
     this.ContextCommand = ContextMenuCommandBuilder;
 
     /**
      * @type {config}
+     * @protected
      */
     this.config = config;
 
     /**
      * Custom API
      * @type {API}
+     * @protected
      */
     this.api = new API(this);
 
     /**
      * Guild Manager
      * @type {GuildManager}
+     * @protected
      */
     this.guilds = new GuildManager(this.client);
 
     /**
      * Emoji Manager
      * @type {EmojiManager}
+     * @protected
      */
     this.emojis = new EmojiManager(this.client);
 
     /**
      * Voice Connection Manager
      * @type {VoiceManager}
+     * @protected
      */
     this.connections = new VoiceManager(this.client);
 
     /**
      * Channel Manager
      * @type {ChannelManager}
+     * @protected
      */
     this.channels = new ChannelManager(this.client);
 
     /**
      * Invite Manager
      * @type {InviteManager}
+     * @protected
      */
     this.invites = new InviteManager(this.client);
 
     /**
      * Role Manager
      * @type {RoleManager}
+     * @protected
      */
     this.roles = new RoleManager(this.client);
 
     /**
      * Message Manager
      * @type {MessageManager}
+     * @protected
      */
     this.messages = new MessageManager(this.client);
 
     /**
      * @type {Checker}
-     * @param {any} data 
+     * @param {any} data
+     * @protected
      */
     this.check = (data) => (Checker(data));
 
     /**
      * @type {isOwner}
+     * @protected
      */
     this.isOwner = isOwner;
   };
 
   /**
    * @returns {Client}
+   * @protected
    */
   get client() {
     return this._client;
@@ -117,6 +129,7 @@ export class Base {
 
   /**
    * @returns {Collection<string, import("./Command.js").default>}
+   * @protected
    */
   get commands() {
     return commands;
@@ -124,6 +137,7 @@ export class Base {
 
   /**
    * @returns {Collection<string, import("./Event.js").default>}
+   * @protected
    */
   get events() {
     return events;
@@ -131,6 +145,7 @@ export class Base {
 
   /**
    * @returns {Collection<string, import("./Handler.js").default>}
+   * @protected
    */
   get handlers() {
     return handlers;
@@ -138,6 +153,7 @@ export class Base {
 
   /**
    * @returns {Collection<string, number>}
+   * @protected
    */
   get cooldowns() {
     return cooldowns;
@@ -145,6 +161,7 @@ export class Base {
 
   /**
    * @returns {Collection<string, import("../../classes/Language.js").default>}
+   * @protected
    */
   get languages() {
     return languages;
@@ -154,6 +171,7 @@ export class Base {
    * Creates new Embed.
    * @param {import("discord.js").APIEmbed | import("discord.js").EmbedField} header 
    * @returns {EmbedBuilder}
+   * @protected
    */
   Embed(header = null) {
     return (new EmbedBuilder(header));
@@ -163,6 +181,7 @@ export class Base {
    * Creates new Row.
    * @param {import("discord.js").ActionRowData} header 
    * @returns {ActionRowBuilder}
+   * @protected
    */
   Row(header = null) {
     return (new ActionRowBuilder(header));
@@ -172,6 +191,7 @@ export class Base {
    * Creates new Button.
    * @param {import("discord.js").ButtonComponentData} header 
    * @returns {ButtonBuilder}
+   * @protected
    */
   Button(header = null) {
     return (new ButtonBuilder(header));
@@ -182,6 +202,7 @@ export class Base {
    * @param {string} type 
    * @param {any} header
    * @returns {StringSelectMenuBuilder | RoleSelectMenuBuilder | ChannelSelectMenuBuilder | MentionableSelectMenuBuilder | UserSelectMenuBuilder}
+   * @protected
    */
   Menu(type, header = null) {
     s.string.parse(type);
@@ -200,6 +221,7 @@ export class Base {
    * Creates new Modal.
    * @param {import("discord.js").ModalComponentData} header 
    * @returns {ModalBuilder}
+   * @protected
    */
   Modal(header = null) {
     return (new ModalBuilder(header));
@@ -209,6 +231,7 @@ export class Base {
    * Creates new Text Input.
    * @param {import("discord.js").TextInputComponentData} header 
    * @returns {TextInputBuilder}
+   * @protected
    */
   TextInput(header = null) {
     return (new TextInputBuilder(header));
@@ -219,6 +242,7 @@ export class Base {
    * @param {import("discord.js").BufferResolvable | import("node:stream").Stream} header 
    * @param {import("discord.js").AttachmentData} data 
    * @returns 
+   * @protected
    */
   Attachment(header, data) {
     return (new AttachmentBuilder(header, data));
@@ -229,6 +253,7 @@ export class Base {
    * @param {number} timestamp 
    * @param {{ format?: string, onlyNumber?: boolean }} options 
    * @returns {string | number}
+   * @protected
    */
   time(timestamp, options = { format: "R", onlyNumber: false }) {
     s.number.parse(timestamp);
@@ -254,6 +279,7 @@ export class Base {
    * @param {string} content 
    * @param {string} language 
    * @returns {string}
+   * @protected
    */
   code(content, language = "js") {
     s.string.parse(content);
@@ -269,6 +295,7 @@ export class Base {
    * @param {CommandInteraction} interaction 
    * @param {{ embeds?: EmbedBuilder[], buttons?: ButtonBuilder[] }} options
    * @returns {Promise<void>}
+   * @protected
    */
   async pagination(interaction, options = { embeds: [], buttons: [] }) {
     if (interaction && !(interaction instanceof CommandInteraction)) error(TypeError, "InvalidType", `'${interaction}' is not a Command Interaction.`);

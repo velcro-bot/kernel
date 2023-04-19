@@ -72,6 +72,9 @@ export class Command extends Base {
 
     const command = data.toJSON();
 
+    if (!this.name) this.name = command.name;
+    if (!this.description) this.description = command.description;
+    
     this.data = command;
 
     return command;

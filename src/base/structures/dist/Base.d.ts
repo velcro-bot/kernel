@@ -25,52 +25,47 @@ import API, {
 
 import Checker, { isOwner } from "../../functions/Checker.js";
 
-import Command from "./Command.js";
-import Event from "./Event.js";
-import Handler from "./Handler.js";
-import Language from "../../classes/Language.js";
-
 declare abstract class Base {
   public constructor(client: Client);
 
   private readonly _client: Client;
 
-  public SlashCommand: typeof SlashCommandBuilder;
-  public ContextCommand: typeof ContextMenuCommandBuilder;
+  protected SlashCommand: typeof SlashCommandBuilder;
+  protected ContextCommand: typeof ContextMenuCommandBuilder;
 
-  public readonly config: typeof config;
+  protected readonly config: typeof config;
 
-  public api: API;
-  public guilds: GuildManager;
-  public messages: MessageManager;
-  public emojis: EmojiManager;
-  public channels: ChannelManager;
-  public invites: InviteManager;
-  public connections: VoiceManager;
-  public roles: RoleManager;
+  protected api: API;
+  protected guilds: GuildManager;
+  protected messages: MessageManager;
+  protected emojis: EmojiManager;
+  protected channels: ChannelManager;
+  protected invites: InviteManager;
+  protected connections: VoiceManager;
+  protected roles: RoleManager;
 
-  public check: typeof Checker;
-  public isOwner: typeof isOwner;
+  protected check: typeof Checker;
+  protected isOwner: typeof isOwner;
 
-  public client: Client;
+  protected client: Client;
 
-  public commands: Collection<string, Command>;
-  public events: Collection<string, Event>;
-  public handlers: Collection<string, Handler>;
-  public languages: Collection<string, Language>;
-  public cooldowns: Collection<string, number>;
+  protected commands: Collection<string, import("./Command").Command>;
+  protected events: Collection<string, import("./Event").Event>;
+  protected handlers: Collection<string, import("./Handler").Command>;
+  protected languages: Collection<string, { code: string, source: {} }>;
+  protected cooldowns: Collection<string, number>;
 
-  public Embed(data?: EmbedData): EmbedBuilder;
-  public Row(data?: ActionRowData): ActionRowBuilder;
-  public Button(data?: ButtonComponentData): ButtonBuilder;
-  public Menu(type: BaseMenuTypes, data?: any): StringSelectMenuBuilder | RoleSelectMenuBuilder | ChannelSelectMenuBuilder | MentionableSelectMenuBuilder | UserSelectMenuBuilder;
-  public Modal(data?: ModalComponentData): ModalBuilder;
-  public TextInput(data?: TextInputComponentData): TextInputBuilder;
-  public Attachment(header: BufferResolvable, data?: AttachmentData): AttachmentBuilder;
+  protected Embed(data?: EmbedData): EmbedBuilder;
+  protected Row(data?: ActionRowData): ActionRowBuilder;
+  protected Button(data?: ButtonComponentData): ButtonBuilder;
+  protected Menu(type: BaseMenuTypes, data?: any): StringSelectMenuBuilder | RoleSelectMenuBuilder | ChannelSelectMenuBuilder | MentionableSelectMenuBuilder | UserSelectMenuBuilder;
+  protected Modal(data?: ModalComponentData): ModalBuilder;
+  protected TextInput(data?: TextInputComponentData): TextInputBuilder;
+  protected Attachment(header: BufferResolvable, data?: AttachmentData): AttachmentBuilder;
 
-  public time(timestamp: number, { format, onlyNumber }: { format?: string, onlyNumber?: boolean }): string | number;
-  public code(content: string, language?: string): string;
-  public pagination(interaction: CommandInteraction, { embeds, buttons }: { embeds: (EmbedBuilder | EmbedData)[], buttons?: (ButtonBuilder | ButtonComponentData)[] }): Promise<void>;
+  protected time(timestamp: number, { format, onlyNumber }: { format?: string, onlyNumber?: boolean }): string | number;
+  protected code(content: string, language?: string): string;
+  protected pagination(interaction: CommandInteraction, { embeds, buttons }: { embeds: (EmbedBuilder | EmbedData)[], buttons?: (ButtonBuilder | ButtonComponentData)[] }): Promise<void>;
 }
 
 type BaseMenuTypes = "Role" | "Channel" | "Mentionable" | "User" | "String";

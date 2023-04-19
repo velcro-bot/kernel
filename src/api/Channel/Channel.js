@@ -1,4 +1,4 @@
-import Storage from "../../base/functions/Loader/Storage.js";
+import { Storage } from "../../base/Utils.js";
 const ChannelCache = Storage("channels");
 
 export default ChannelCache;
